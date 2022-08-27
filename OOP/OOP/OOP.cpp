@@ -7,7 +7,7 @@ using namespace std;
 // Abstract - orginized code
 // Incapsulation (can't change what already was there, but can add new things)
 // Polymorphysm
-// Inheritence
+// Inheritence 
 
 // LCD matrix
 // Case
