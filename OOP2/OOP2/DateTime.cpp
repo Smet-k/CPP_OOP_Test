@@ -13,7 +13,7 @@ DateTime::DateTime()
 	hours = 0;
 	minutes = 0;
 	seconds = 0;
-
+	timezone.offset = 0;
 }
 
 DateTime::DateTime(int day, int month, int year)
@@ -24,6 +24,7 @@ DateTime::DateTime(int day, int month, int year)
 	this->hours = 0;
 	this->minutes = 0;
 	this->seconds = 0;
+	timezone.offset = 0;
 }
 
 DateTime::DateTime(int day, int month, int year, int hours, int minutes, int seconds)
@@ -34,6 +35,20 @@ DateTime::DateTime(int day, int month, int year, int hours, int minutes, int sec
 	this->hours = hours;
 	this->minutes = minutes;
 	this->seconds = seconds;
+	timezone.offset = 0;
+}
+
+DateTime::DateTime(int day, int month, int year, int hours, int minutes, int seconds, int timezone)
+{
+	this->day = day;
+	this->month = month;
+	this->year = year;
+	this->hours = hours + timezone;
+	this->minutes = minutes;
+	this->seconds = seconds;
+	if (timezone > 13) { timezone = 13; }
+	if (timezone < -14) { timezone = -14; }
+	this->timezone.offset = timezone;
 }
 
 DateTime DateTime::now()
@@ -45,7 +60,23 @@ DateTime DateTime::now()
 	output.day = tmNow->tm_mday;
 	output.month = tmNow->tm_mon + 1;
 	output.year = tmNow->tm_year + 1900;
-	output.hours = tmNow->tm_hour + 3;
+	output.hours = tmNow->tm_hour;
+	output.minutes = tmNow->tm_min;
+	output.seconds = tmNow->tm_sec;
+
+	return output;
+}
+
+DateTime DateTime::now(int offset)
+{
+	time_t now = time(0);
+	tm* tmNow = gmtime(&now);
+	DateTime output;
+
+	output.day = tmNow->tm_mday;
+	output.month = tmNow->tm_mon + 1;
+	output.year = tmNow->tm_year + 1900;
+	output.hours = tmNow->tm_hour + offset; 
 	output.minutes = tmNow->tm_min;
 	output.seconds = tmNow->tm_sec;
 
@@ -72,7 +103,7 @@ char* DateTime::toString()
 }
 
 
-DateTime DateTime::Check(DateTime input)
+DateTime& DateTime::Check(DateTime input)
 {
 	int md[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
 
@@ -276,8 +307,59 @@ long DateTime::totalMonths()
 
 	return result;
 }
-// date 1 day - 12 , date 2 day - 10 = 22
-DateTime DateTime::add(DateTime input)
+
+DateTime DateTime::max(DateTime input)
+{
+	DateTime dt1 = input;
+	DateTime dt2 = { day, month, year, hours, minutes, seconds };
+	if (dt2.year > dt1.year){return dt2;}
+	else if(dt2.year < dt1.year){return dt1;}
+	
+	if (dt2.month > dt1.month){return dt2;}
+	else if (dt2.month < dt1.month){return dt1;}
+	
+	if (dt2.day > dt1.day){return dt2;}
+	else if(dt2.day < dt1.day){return dt1;}
+
+	if (dt2.hours > dt1.hours){return dt2;}
+	else if (dt2.hours < dt1.hours){return dt1;}
+	
+	if (dt2.minutes > dt1.minutes){return dt2;}
+	else if (dt2.minutes < dt1.minutes){return dt1;}
+	
+	if (dt2.seconds > dt1.seconds){return dt2;}
+	else if (dt2.seconds < dt1.seconds){return dt1;}
+	
+	return dt2;
+}
+
+
+DateTime DateTime::min(DateTime input)
+{
+	DateTime dt1 = input;
+	DateTime dt2 = { day, month, year, hours, minutes, seconds };
+	if (dt2.year < dt1.year){return dt2;}
+	else if(dt2.year > dt1.year){return dt1;}
+
+	if (dt2.month < dt1.month){return dt2;}
+	else if(dt2.month > dt1.month){return dt1;}
+
+	if (dt2.day < dt1.day){return dt2;}
+	else if(dt2.day > dt1.day){return dt1;}
+
+	if (dt2.hours < dt1.hours){return dt2;}
+	else if((dt2.hours > dt1.hours)){return dt1;}
+
+	if (dt2.minutes < dt1.minutes){return dt2;}
+	else if (dt2.minutes > dt1.minutes){return dt1;}
+
+	if (dt2.seconds < dt1.seconds){return dt2;}
+	else if((dt2.seconds > dt1.seconds)){return dt1;}
+
+	return dt2;
+}
+
+DateTime& DateTime::operator+(const DateTime& input)
 {
 	long osecond, ominute, ohour, oday, omonth;
 
@@ -288,163 +370,13 @@ DateTime DateTime::add(DateTime input)
 	ohour = hours + dt2.hours;
 	oday = day + dt2.day;
 	omonth = month + dt2.month;
-	DateTime output { oday, omonth, year, ohour, ominute, osecond };
-	
-	
+	DateTime output{ oday, omonth, year, ohour, ominute, osecond };
+
+
 	return Check(output);
-} 
-
-//DateTime(int day, int month, int year, int hours, int minutes, int seconds);
-
-DateTime DateTime::max(DateTime input)
-{
-	DateTime dt1 = input;
-	DateTime dt2 = { day, month, year, hours, minutes, seconds };
-	if (dt2.year > dt1.year || dt2.year < dt1.year)
-	{
-		if (dt2.year > dt1.year)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.month > dt1.month || dt1.month > dt2.month)
-	{
-		if (dt2.month > dt1.month)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.day > dt1.day || dt1.day > dt2.day)
-	{
-		if (dt2.day > dt1.day)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.hours > dt1.hours || dt1.hours > dt2.hours)
-	{
-		if (dt2.hours > dt1.hours)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.minutes > dt1.minutes || dt1.minutes > dt2.minutes)
-	{
-		if (dt2.minutes > dt1.minutes)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.seconds > dt1.seconds || dt1.seconds > dt2.seconds)
-	{
-		if (dt2.seconds > dt1.seconds)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	return dt2;
 }
 
-
-DateTime DateTime::min(DateTime input)
-{
-	DateTime dt1 = input;
-	DateTime dt2 = { day, month, year, hours, minutes, seconds };
-	if (dt2.year < dt1.year || dt1.year < dt2.year)
-	{
-		if (dt2.year < dt1.year)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.month < dt1.month || dt1.month < dt2.month)
-	{
-		if (dt2.month < dt1.month)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.day < dt1.day || dt1.day < dt2.day)
-	{
-		if (dt2.day < dt1.day)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.hours < dt1.hours || dt1.hours < dt2.hours)
-	{
-		if (dt2.hours < dt1.hours)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.minutes < dt1.minutes || dt1.minutes < dt2.minutes)
-	{
-		if (dt2.minutes < dt1.minutes)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	else if (dt2.seconds < dt1.seconds || dt1.seconds < dt2.seconds)
-	{
-		if (dt2.seconds < dt1.seconds)
-		{
-			return dt2;
-		}
-		else
-		{
-			return dt1;
-		}
-	}
-	return dt2;
-}
-
-
-DateTime DateTime::substract(DateTime input)
+DateTime& DateTime::operator-(const DateTime& input)
 {
 	long osecond, ominute, ohour, oday, omonth;
 
@@ -459,4 +391,108 @@ DateTime DateTime::substract(DateTime input)
 
 
 	return Check(output);
+}
+
+bool DateTime::operator>(const DateTime &input)
+{
+	if (this->year > input.year){return true;}
+	else if (this->year < input.year){return false;}
+
+	if (this->month > input.month){	return true;}
+	else if (this->month < input.month){return false;}
+
+	if (this->day > input.day){return true;}
+	else if (this->day < input.day){return false;}
+
+	if (this->hours > input.hours){	return true;}
+	else if (this->hours < input.hours){return false;}
+
+	if (this->minutes > input.minutes){	return true;}
+	else if (this->minutes < input.minutes){return false;}
+
+	if (this->seconds > input.seconds){	return true;}
+	else if (this->seconds < input.seconds){return false;}
+
+	return 0;
+}
+
+bool DateTime::operator==(const DateTime& input)
+{
+	if (this->year == input.year) { return true; }
+	else if (this->year != input.year) { return false; }
+
+	if (this->month == input.month) { return true; }
+	else if (this->month != input.month) { return false; }
+
+	if (this->day == input.day) { return true; }
+	else if (this->day != input.day) { return false; }
+
+	if (this->hours == input.hours) { return true; }
+	else if (this->hours != input.hours) { return false; }
+
+	if (this->minutes == input.minutes) { return true; }
+	else if (this->minutes != input.minutes) { return false; }
+
+	if (this->seconds == input.seconds) { return true; }
+	else if (this->seconds != input.seconds) { return false; }
+
+	return 0;
+}
+
+bool DateTime::operator<(const DateTime& input)
+{
+	return !(*this > input);
+}
+
+bool DateTime::operator>=(const DateTime& input)
+{
+	if((*this > input) || (*this == input)){return true;}
+	else { return false;}
+}
+
+bool DateTime::operator<=(const DateTime& input)
+{
+	if (!(*this > input) || (*this == input)) { return true; }
+	else { return false; }
+}
+
+bool DateTime::operator!=(const DateTime& input)
+{
+	return !(*this == input);
+}
+
+std::ostream& operator <<(std::ostream& output, DateTime& source)
+{
+	output << source.day << "/" << source.month << "/" << source.year <<
+		"/" << source.hours << "/" << source.minutes << "/" << source.seconds;
+	return output;
+}
+
+std::istream& operator >>(std::istream& input, DateTime& source)
+{
+	int md[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+	std::cout << "Enter a year: ";
+	input >> source.year;
+	do  {
+		std::cout << "Enter a month: ";
+		input >> source.month;
+	} while (source.month > 12);
+	do {
+		std::cout << "Enter a day: ";
+		input >> source.day;
+	} while (source.day > md[source.month - 1]);
+	do {
+		std::cout << "Enter a hour: ";
+		input >> source.hours;
+	} while (source.hours >= 24);
+	do {
+		std::cout << "Enter a minute: ";
+		input >> source.minutes;
+	} while (source.minutes >= 60);
+	do {
+		std::cout << "Enter a second: ";
+		input >> source.seconds;
+	} while (source.seconds >= 60);
+
+	return input;
 }

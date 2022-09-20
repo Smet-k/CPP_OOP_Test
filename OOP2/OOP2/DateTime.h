@@ -1,9 +1,14 @@
 #ifndef DateTime_h
 #define DateTime_h
-
+#include "TimeZone.h"
+#include <iostream>
+#include <iomanip>
+#include <stdexcept>
 class DateTime
 {
 public:
+
+	TimeZone timezone;
 
 	int day;
 
@@ -23,7 +28,11 @@ public:
 
 	DateTime(int day, int month, int year, int hours, int minutes, int seconds);
 
+	DateTime(int day, int month, int year, int hours, int minutes, int seconds, int timezone);
+
 	static DateTime now();
+
+	static DateTime now(int offset);
 
 	char* toString();
 
@@ -39,7 +48,7 @@ public:
 
 	DateTime addYears(int years);
 
-	DateTime Check(DateTime input);
+	DateTime& Check(DateTime input);
 
 
 	long totalMinutes();
@@ -50,14 +59,29 @@ public:
 
 	long totalMonths();
 
-
-	DateTime add(DateTime input); // date 1 day - 12 , date 2 day - 10 = 22
-
 	DateTime max(DateTime input);
 
 	DateTime min(DateTime input);
 
-	DateTime substract(DateTime input);
+	DateTime& operator+(const DateTime& input);
+
+	DateTime& operator-(const DateTime& input);
+
+	bool operator>(const DateTime& input);
+
+	bool operator<(const DateTime& input);
+
+	bool operator>=(const DateTime& input);
+
+	bool operator<=(const DateTime& input);
+
+	bool operator==(const DateTime& input);
+
+	bool operator!=(const DateTime& input);
+
+	friend std::ostream& operator <<(std::ostream& output, DateTime& source);
+
+	friend std::istream& operator >>(std::istream& input, DateTime& source);
 };
 
 
