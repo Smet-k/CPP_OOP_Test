@@ -464,7 +464,7 @@ bool DateTime::operator!=(const DateTime& input)
 std::ostream& operator <<(std::ostream& output, DateTime& source)
 {
 	output << source.day << "/" << source.month << "/" << source.year <<
-		"/" << source.hours << "/" << source.minutes << "/" << source.seconds;
+		"  " << source.hours << ":" << source.minutes << ":" << source.seconds;
 	return output;
 }
 
