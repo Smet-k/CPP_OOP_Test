@@ -13,49 +13,50 @@ DateTime::DateTime()
 	hours = 0;
 	minutes = 0;
 	seconds = 0;
-	timezone.offset = 0;
 }
 
 DateTime::DateTime(int day, int month, int year)
 {
+	tz = {};
 	this->day = day;
 	this->month = month;
 	this->year = year;
 	this->hours = 0;
 	this->minutes = 0;
 	this->seconds = 0;
-	timezone.offset = 0;
 }
 
 DateTime::DateTime(int day, int month, int year, int hours, int minutes, int seconds)
 {
+	tz = {};
 	this->day = day;
 	this->month = month;
 	this->year = year;
 	this->hours = hours;
 	this->minutes = minutes;
 	this->seconds = seconds;
-	timezone.offset = 0;
+	
 }
 
 DateTime::DateTime(int day, int month, int year, int hours, int minutes, int seconds, int timezone)
 {
+	tz = {timezone};
 	this->day = day;
 	this->month = month;
 	this->year = year;
-	this->hours = hours + timezone;
+	this->hours = hours;
 	this->minutes = minutes;
 	this->seconds = seconds;
-	if (timezone > 13) { timezone = 13; }
-	if (timezone < -14) { timezone = -14; }
-	this->timezone.offset = timezone;
 }
+
 
 DateTime DateTime::now()
 {
+
 	time_t now = time(0);
 	tm* tmNow = gmtime(&now);
 	DateTime output;
+	TimeZone tz = {};
 
 	output.day = tmNow->tm_mday;
 	output.month = tmNow->tm_mon + 1;
@@ -63,25 +64,56 @@ DateTime DateTime::now()
 	output.hours = tmNow->tm_hour;
 	output.minutes = tmNow->tm_min;
 	output.seconds = tmNow->tm_sec;
+	output.tz = tz;
 
 	return output;
 }
 
 DateTime DateTime::now(int offset)
 {
+
 	time_t now = time(0);
 	tm* tmNow = gmtime(&now);
 	DateTime output;
+	TimeZone tz = { offset };
 
 	output.day = tmNow->tm_mday;
 	output.month = tmNow->tm_mon + 1;
 	output.year = tmNow->tm_year + 1900;
-	output.hours = tmNow->tm_hour + offset; 
+	output.hours = tmNow->tm_hour;
 	output.minutes = tmNow->tm_min;
 	output.seconds = tmNow->tm_sec;
-
+	output.tz = tz;
 	return output;
 }
+
+void DateTime::ConvertTimeZone(int timezone)
+{
+	char* output = new char[128];
+
+	//int day, int month, int year, int hours, int minutes, int seconds, int timezone
+	int rawHours = hours - tz.offset;
+	hours = rawHours + timezone;
+	tz.offset = timezone;
+
+
+	if (this->tz.offset > 0)
+	{
+		std::strcat(output, "UTC+");
+		std::strcat(output, std::to_string(tz.offset).c_str());
+		tz.name = output;
+	}
+	if (this->tz.offset < 0)
+	{
+		std::strcat(output, "UTC");
+		std::strcat(output, std::to_string(tz.offset).c_str());
+		tz.name = output;
+	}
+	if (this->tz.offset == 0) { tz.name = "UTC"; }
+
+
+}
+
 
 char* DateTime::toString()
 {
@@ -98,9 +130,11 @@ char* DateTime::toString()
 	std::strcat(output, std::to_string(minutes).c_str());
 	std::strcat(output, ":");
 	std::strcat(output, std::to_string(seconds).c_str());
-
+	std::strcat(output, "    ");
+	std::strcat(output, std::to_string(tz.offset).c_str());
 	return output;
 }
+
 
 
 DateTime& DateTime::Check(DateTime input)
@@ -464,7 +498,7 @@ bool DateTime::operator!=(const DateTime& input)
 std::ostream& operator <<(std::ostream& output, DateTime& source)
 {
 	output << source.day << "/" << source.month << "/" << source.year <<
-		"  " << source.hours << ":" << source.minutes << ":" << source.seconds;
+		"  " << source.hours << ":" << source.minutes << ":" << source.seconds << "   Timezone:" << source.tz.name;
 	return output;
 }
 
@@ -493,6 +527,12 @@ std::istream& operator >>(std::istream& input, DateTime& source)
 		std::cout << "Enter a second: ";
 		input >> source.seconds;
 	} while (source.seconds >= 60);
+
+	do {
+		std::cout << "Enter a timezone: ";
+		input >> source.tz.offset;
+	} while (source.tz.offset >= 13 || source.tz.offset <= -14);
+
 
 	return input;
 }

@@ -1,11 +1,16 @@
 #ifndef TimeZone_h
 #define TimeZone_h
 
+
+
 class TimeZone
 {
 public:
+	const char* name;
 	int offset;
 
-	void converter( int target);
+	TimeZone(int offset);
+
+	TimeZone();
 };
 #endif

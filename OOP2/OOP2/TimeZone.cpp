@@ -1,7 +1,39 @@
+#pragma warning(disable : 4996)
 #include <iostream>
 #include "TimeZone.h"
-
-void TimeZone::converter(int target)
+#include <string>
+TimeZone::TimeZone()
 {
-	//addHours(offset + (target - offset));
+	offset = 3;
+	name = "UTC+3";
 }
+
+
+TimeZone::TimeZone(int offset)
+{
+	char* output = new char[128];
+	if (offset > 13) { offset = 13; }
+
+	if (offset < -14) { offset = -14; }
+	this->offset = offset;
+
+	if (this->offset > 0) 
+	{
+		std::strcat(output, "UTC+");
+		std::strcat(output, std::to_string(offset).c_str());
+		name = output;
+	}
+	if (this->offset < 0) 
+	{
+		std::strcat(output, "UTC");
+		std::strcat(output, std::to_string(offset).c_str());
+		name = output;
+	}
+	if (this->offset == 0) { name = "UTC"; }
+
+	
+}
+
+
+
+

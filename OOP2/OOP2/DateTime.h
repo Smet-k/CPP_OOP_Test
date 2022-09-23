@@ -8,7 +8,7 @@ class DateTime
 {
 public:
 
-	TimeZone timezone;
+	TimeZone tz;
 
 	int day;
 
@@ -30,9 +30,12 @@ public:
 
 	DateTime(int day, int month, int year, int hours, int minutes, int seconds, int timezone);
 
-	static DateTime now();
+	void ConvertTimeZone(int timezone);
 
 	static DateTime now(int offset);
+
+	static DateTime now();
+
 
 	char* toString();
 
