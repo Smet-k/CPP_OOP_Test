@@ -7,7 +7,7 @@ class Base16
 public:
 	
 
-
+	// supposed to be char
 	std::string value;
 
 	int intvalue;
