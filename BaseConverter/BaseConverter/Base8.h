@@ -1,6 +1,5 @@
 #ifndef Base8_h
 #define Base8_h
-
 class Base8
 {
 public:

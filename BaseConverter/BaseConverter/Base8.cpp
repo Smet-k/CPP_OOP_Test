@@ -3,7 +3,7 @@
 #include "Base8.h"
 
 
-Base8::Base8()
+Base8::Base8() 
 {
 	value = 0;
 }
