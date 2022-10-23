@@ -1,18 +1,22 @@
 #ifndef List_h
 #define List_h
-#include "Element.h"
+#include "ICollection.h"
 #include <iostream>
+#include "Element.h"
+#include "Stack.h"
+#include "Queue.h"
 template<class T>
-class List
+class List : ICollection<T>
 {
+public:
     Element<T>* first;
     Element<T>* last;
-public:
+
     List<T>()
     {
-        first = NULL;
-        last = NULL;
-    }
+        this->first = NULL;
+        this->last = NULL;
+    };
 
     List<T>(Element<T>* first, Element<T>* last)
     {
@@ -20,7 +24,7 @@ public:
         this->last = last;
     }
 
-    void remove(int index)
+    void remove(int index) 
     {
         Element<T>* nextToCurrent = this->first;
         Element<T>* current = this->first;
@@ -28,9 +32,9 @@ public:
 
         if (index == 0)
         {
-            nextToCurrent = first->next;
-            first->value = nextToCurrent->value;
-            first->next = nextToCurrent->next;
+            nextToCurrent = this->first->next;
+            this->first->value = nextToCurrent->value;
+            this->first->next = nextToCurrent->next;
         }
         else
         {
@@ -60,9 +64,61 @@ public:
         delete nextToCurrent;
     }
 
+    void add(T data) override
+    {
+        if (!this->first)
+        {
+            this->first = new Element<T>;
+            this->first->value = data;
+            this->first->next = NULL;
+            this->last = this->first;
+        }
+        else
+        {
+            if (this->first == this->last)
+            {
+                this->last = new Element<T>;
+                this->last->value = data;
+                this->last->next = NULL;
+                this->first->next = this->last;
+            }
+            else
+            {
+                Element<T>* item = new Element<T>;
+                item->value = data;
+                item->next = NULL;
+                this->last->next = item;
+                this->last = item;
+            }
+        }
+    }
+
+    T operator [](int index) override
+    {
+        return get(index);
+    }
+
+private:
+    T get(int index) override
+    {
+        if (index == 0)
+        {
+            return this->first->value;
+        }
+        else
+        {
+            Element<T>* current = this->first;
+            for (int i = 0; i < index; i++)
+            {
+                current = current->next;
+            }
+            return current->value;
+        }
+    }
+public:
     void remove(Element<T>* element)
     {
-        Element<T>* current = first;
+        Element<T>* current = this->first;
         int size = length();
         for (int i = 0; i < size; i++)
         {
@@ -94,43 +150,16 @@ public:
         
     }
 
-    void add(T data)
-    {
-        if (!first)
-        {
-            first = new Element<T>;
-            first->value = data;
-            first->next = NULL;
-            last = first;
-        }
-        else
-        {
-            if (first == last)
-            {
-                last = new Element<T>;
-                last->value = data;
-                last->next = NULL;
-                first->next = last;
-            }
-            else
-            {
-                Element<T>* item = new Element<T>;
-                item->value = data;
-                item->next = NULL;
-                last->next = item;
-                last = item;
-            }
-        }
-    }
+
     Element<T>* getElement(int index)
     {
         if (index == 0)
         {
-            return first;
+            return this->first;
         }
         else
         {
-            Element<T>* current = first;
+            Element<T>* current = this->first;
             for (int i = 0; i < index; i++)
             {
                 current = current->next;
@@ -138,10 +167,7 @@ public:
             return current;
         }
     }
-    T operator [](int index)
-    {
-        return get(index);
-    }
+
 
     List<T>* take(int count)
     {
@@ -185,15 +211,15 @@ public:
 
 
     //true - increment, false decrement 
-    List<T>* OrderBy(bool asc = true)
+    List<T> OrderBy(bool asc = true)
     {
 
-        
+
         int size = this->length();
-        
+
         List<T> input = { this->first,this->last };
         List<T> output = {};
-        if(asc) 
+        if (asc)
         {
             for (int j = 0;j < size - 1;j++)
             {
@@ -240,37 +266,42 @@ public:
             output.add(get(0));
         }
         List<T> linkOutput = { output.first,output.last };
-        return &linkOutput;
+        return linkOutput;
     }
 
 
-
-
-private:
-    T get(int index)
+    
+    Stack<T> ToStack()
     {
-        if (index == 0)
+        Stack<T> output;
+        int size = length();
+        for(int i = 0;i < size;i++)
         {
-            return first->value;
+            output.add(get(i));
         }
-        else
-        {
-            Element<T>* current = first;
-            for (int i = 0; i < index; i++)
-            {
-                current = current->next;
-            }
-            return current->value;
-        }
+
+        return output;
     }
 
-public:
+    Queue<T> ToQueue()
+    {
+        Queue<T> output;
+        int size = length();
+        for (int i = 0;i < size;i++)
+        {
+            output.add(get(i));
+        }
+
+        return output;
+    }
+    
     ~List()
     {
         //if (first != NULL && first != nullptr) { delete first; }
 
         //if(last != NULL && last != nullptr){ delete last; }
     }
+
 
 
 

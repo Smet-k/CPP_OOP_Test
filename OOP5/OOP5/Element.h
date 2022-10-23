@@ -1,4 +1,9 @@
+#ifndef Element_h
+#define Element_h
+
+
 #include <iostream>
+
 template<class T>
 class Element
 {
@@ -7,3 +12,5 @@ public:
 	T value;
 
 };
+
+#endif
