@@ -3,8 +3,11 @@
 #include "ICollection.h"
 #include <iostream>
 #include "Element.h"
-#include "Stack.h"
-#include "Queue.h"
+#include "Exceptions.h"
+#include "CollectionExtentionMethods.h"
+// exceptions for - get() - StackOverFlowException (out of stack)
+//                  remove() - NullReferenceException (removing something out of bounds)
+//                  KeyDublicateException - in dictionary - dublicating keys
 template<class T>
 class List : ICollection<T>
 {
@@ -26,6 +29,10 @@ public:
 
     void remove(int index) 
     {
+        if (index >= this->length())
+        {
+            throw NullReferenceException();
+        }
         Element<T>* nextToCurrent = this->first;
         Element<T>* current = this->first;
         Element<T>* beforeCurrent = this->first;
@@ -98,9 +105,12 @@ public:
         return get(index);
     }
 
-private:
     T get(int index) override
     {
+        if (index >= this->length())
+        {
+            throw StackOverFlowException();
+        }
         if (index == 0)
         {
             return this->first->value;
@@ -110,12 +120,14 @@ private:
             Element<T>* current = this->first;
             for (int i = 0; i < index; i++)
             {
+
                 current = current->next;
             }
             return current->value;
         }
+        
     }
-public:
+
     void remove(Element<T>* element)
     {
         Element<T>* current = this->first;
@@ -267,32 +279,6 @@ public:
         }
         List<T> linkOutput = { output.first,output.last };
         return linkOutput;
-    }
-
-
-    
-    Stack<T> ToStack()
-    {
-        Stack<T> output;
-        int size = length();
-        for(int i = 0;i < size;i++)
-        {
-            output.add(get(i));
-        }
-
-        return output;
-    }
-
-    Queue<T> ToQueue()
-    {
-        Queue<T> output;
-        int size = length();
-        for (int i = 0;i < size;i++)
-        {
-            output.add(get(i));
-        }
-
-        return output;
     }
     
     ~List()

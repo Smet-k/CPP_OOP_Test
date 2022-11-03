@@ -3,8 +3,6 @@
 #include "Element.h"
 #include <iostream>
 #include "ICollection.h"
-#include "Queue.h"
-#include "List.h"
 
 template<class T>
 class Stack : ICollection<T>
@@ -96,22 +94,7 @@ public:
 
     }
 
-    Queue<T> ToQueue()
-    {
-        Queue<T> output;
-        int size = length();
-        for (int i = 0;i < size;i++)
-        {
-            output.add(get(i));
-        }
-
-        return output;
-    }
-
-    //List<T>/*error*/ToList()
-    //{
-    //    return NULL;
-    //}
+    
 
    
 

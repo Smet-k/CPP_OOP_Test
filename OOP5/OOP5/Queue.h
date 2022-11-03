@@ -1,8 +1,7 @@
 #ifndef Queue_h
 #define Queue_h
 #include "ICollection.h"
-#include "Stack.h"
-#include "List.h"
+
 
 //LILO
 template<class T>

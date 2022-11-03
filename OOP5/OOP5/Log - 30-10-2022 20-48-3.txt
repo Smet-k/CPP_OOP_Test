@@ -1,0 +1,4 @@
+30/10/2022 20:48:3 - Error - Item out of bounds
+30/10/2022 20:48:3 - Error - NullReference
+30/10/2022 20:48:3 - Error - Keys can't repeat
+30/10/2022 20:48:3 - Error - NullReference

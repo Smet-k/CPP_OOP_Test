@@ -3,9 +3,74 @@
 #include "Queue.h"
 #include "Stack.h"
 #include "Dictionary.h"
+#include "Exceptions.h"
+
+int divide(int a, int b)
+{
+	if (b == 0) 
+	{ 
+		throw Exception("divide(int a, int b)"); 
+	}
+	return a / b;
+}
+
 
 int main()
 {
+
+	List < std::string > myKeys;
+	List<int> myValue;
+	Stack<int> myStack;
+	Dictionary<std::string, int> dic;
+	//Exceptions handling
+
+	
+	dic.add("key1", 2);
+	dic.add("key2", 5);
+	myValue = dic.getValues();
+	myKeys = dic.getKeys();
+	myValue.print();
+	myKeys.print();
+	/*
+	try 
+	{
+		std::cout << myList.get(2);
+		
+	}
+	catch (StackOverFlowException i)
+	{
+		std::cout << i.message << "\n";
+	}
+
+
+	try
+	{
+		myList.remove(5);
+	}
+	catch (NullReferenceException i)
+	{
+		std::cout << i.message << "\n";
+	}
+
+
+	try
+	{	
+	dic.add("key", 1);
+	dic.add("key", 2);
+	}
+	catch (KeyDublicateException i)
+	{
+		std::cout << i.message << "\n";
+	}
+
+	try
+	{
+		dic.remove(5);
+	}
+	catch (NullReferenceException i)
+	{
+		std::cout << i.message << "\n";
+	}
 
 	List<int> myList;
 	myList.add(5);
@@ -32,7 +97,7 @@ int main()
 	//List<int> list = myStack.ToList();
 	//list.print();
 	std::cout << "\n";
-	/*
+	
 	KeyValuePair<std::string, int> seventh;
 	seventh.key = "seventh";
 	seventh.value = 7;

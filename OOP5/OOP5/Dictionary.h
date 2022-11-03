@@ -3,7 +3,7 @@
 #pragma warning(disable : 4996)
 #include "KeyValuePair.h"
 #include <string>
-
+#include "Exceptions.h"
 // + overload
 // merge / add
 
@@ -46,7 +46,7 @@ public:
 		// if key already exists - error
 		// toString: key - value; \n
 		// sort (by value)
-		if (keyExists(key)) { std::cout << "This key already exists. \n"; return; }
+		if (keyExists(key)) { throw KeyDublicateException();}
 
 		if (!this->first)
 		{
@@ -80,6 +80,8 @@ public:
 
 	void remove(int index)
 	{
+		if (index > this->length()) { throw NullReferenceException(); }
+
 		KeyValuePair<T, U>* nextToCurrent = this->first;
 		KeyValuePair<T, U>* current = this->first;
 		KeyValuePair<T, U>* beforeCurrent = this->first;
@@ -142,7 +144,7 @@ public:
 
 	void add(KeyValuePair<T,U> input)
 	{
-		if (keyExists(input.key)) { std::cout << "This key already exists. \n"; return; }
+		if (keyExists(input.key)) { throw KeyDublicateException();}
 
 		if (!this->first)
 		{
@@ -293,14 +295,31 @@ public:
 
 	List<T> getKeys()
 	{
-	
+		Dictionary<T, U> input(this->first,this->last);
+		List<T> output;
+		int size = input.length();
+		for (int i = 0;i < size;i++)
+		{
+			KeyValuePair<T, U> current = getPair(i);
+			output.add(current.key);
+		}
+
+		return output;
 	}
 
-	List<U> getValue()
+	List<U> getValues()
 	{
-	
-	}
+		Dictionary<T, U> input(this->first, this->last);
+		List<U> output;
+		int size = input.length();
+		for (int i = 0;i < size;i++)
+		{
+			KeyValuePair<T, U> current = getPair(i);
+			output.add(current.value);
+		}
 
+		return output;
+	}
 private:
 	U get(T index)
 	{
@@ -331,6 +350,8 @@ private:
 		}
 		return {"empty",0};
 	}
+
+
 };
 
 #endif
