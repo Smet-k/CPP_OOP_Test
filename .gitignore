@@ -353,3 +353,4 @@ MigrationBackup/
 *.sln
 *.vcxproj
 *.vcxproj.filters
+*.txt
