@@ -3,13 +3,16 @@
 #pragma warning(disable : 4996)
 #include "KeyValuePair.h"
 #include <string>
-#include "Exceptions.h"
+#include "ILogger.h"
+//#include "Exceptions.h"
 // + overload
 // merge / add
 
 template<class T, class U>
 class Dictionary
 {
+
+public:  //fix this 
 	KeyValuePair<T, U>* first;
 
 	KeyValuePair<T, U>* last;
@@ -17,17 +20,20 @@ class Dictionary
 public:
 	Dictionary<T, U>()
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary");
 		first = NULL;
 		last = NULL;
 	}
 	Dictionary<T, U>(KeyValuePair<T, U>* first, KeyValuePair<T, U>* last)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary");
 		this->first = first;
 		this->last = last;
 	}
 
 	bool keyExists(T key)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - keyExists");
 		int size = length();
 		KeyValuePair<T, U>* current = this->first;
 		for(int i = 0;i < size;i++)
@@ -43,10 +49,11 @@ public:
 
 	void add(T key,U value)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - add");
 		// if key already exists - error
 		// toString: key - value; \n
 		// sort (by value)
-		if (keyExists(key)) { throw KeyDublicateException();}
+		////if (keyExists(key)) { throw KeyDublicateException();}
 
 		if (!this->first)
 		{
@@ -80,6 +87,8 @@ public:
 
 	void remove(int index)
 	{
+		
+		ConsoleLogger::StaticPath::path.Log("Dictionary - remove");
 		if (index > this->length()) { throw NullReferenceException(); }
 
 		KeyValuePair<T, U>* nextToCurrent = this->first;
@@ -124,6 +133,7 @@ public:
 
 	char* toString()
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - toString");
 		KeyValuePair<T, U>* current = this->first;
 		int size = length();
 		char* output = new char[128];
@@ -144,6 +154,7 @@ public:
 
 	void add(KeyValuePair<T,U> input)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - add");
 		if (keyExists(input.key)) { throw KeyDublicateException();}
 
 		if (!this->first)
@@ -178,6 +189,7 @@ public:
 
 	void remove(KeyValuePair<T, U>* keyPair)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - remove");
 		KeyValuePair<T, U>* current = this->first;
 		int size = length();
 		for (int i = 0; i < size; i++)
@@ -189,11 +201,13 @@ public:
 
 	U operator [](T index)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary[]");
 		return this->get(index);
 	}
 
 	Dictionary<T, U>* operator +(KeyValuePair<T,U> input)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary+");
 		add(input);
 
 		return this;
@@ -201,14 +215,16 @@ public:
 
 	Dictionary<T, U>* operator +(Dictionary<T, U> input)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary+");
 		last->next = input.first;
 		last = input.last;
 		
 		return this;
 	}
-	//finish this
+
 	Dictionary<T, U> operator =(Dictionary<T,U>* input)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary=");
 		Dictionary<T, U> output;
 		int size = input->length();
 		for(int i = 0;i < size;i++)
@@ -219,6 +235,7 @@ public:
 	}
 	int length()
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - length");
 		KeyValuePair<T,U>* current = this->first;
 
 		if (current == NULL)
@@ -239,6 +256,7 @@ public:
 
 	Dictionary<T, U> OrderBy(bool asc = true)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - OrderBy");
 		int size = this->length();
 
 		Dictionary<T, U> input = { this->first,this->last };
@@ -295,6 +313,7 @@ public:
 
 	List<T> getKeys()
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - getKeys");
 		Dictionary<T, U> input(this->first,this->last);
 		List<T> output;
 		int size = input.length();
@@ -309,6 +328,7 @@ public:
 
 	List<U> getValues()
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - getValues");
 		Dictionary<T, U> input(this->first, this->last);
 		List<U> output;
 		int size = input.length();
@@ -320,9 +340,27 @@ public:
 
 		return output;
 	}
-private:
+
+	KeyValuePair<T, U> getPair(int index)
+	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - getPair");
+		int size = length();
+		KeyValuePair<T, U>* current = this->first;
+		for (int i = 0; i < size; i++)
+		{
+			if (index == i)
+			{
+				return { current->key,current->value };
+			}
+			current = current->next;
+		}
+		return { NULL,0 };
+	}
+
+	private:
 	U get(T index)
 	{
+		ConsoleLogger::StaticPath::path.Log("Dictionary - get");
 		int size = length();
 		KeyValuePair<T,U>* current = this->first;
 		for (int i = 0; i < size; i++)
@@ -335,22 +373,6 @@ private:
 		}
 		return -1;
 	}
-
-	KeyValuePair<T,U> getPair(int index)
-	{
-		int size = length();
-		KeyValuePair<T, U>* current = this->first;
-		for (int i = 0; i < size; i++)
-		{
-			if (index == i)
-			{
-				return {current->key,current->value};
-			}
-			current = current->next;
-		}
-		return {"empty",0};
-	}
-
 
 };
 

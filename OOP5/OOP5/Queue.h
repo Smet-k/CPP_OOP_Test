@@ -2,7 +2,6 @@
 #define Queue_h
 #include "ICollection.h"
 
-
 //LILO
 template<class T>
 class Queue : ICollection<T>

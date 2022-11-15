@@ -3,7 +3,6 @@
 #include "Element.h"
 #include <iostream>
 #include "ICollection.h"
-
 template<class T>
 class Stack : ICollection<T>
 {
@@ -45,7 +44,6 @@ public:
 
     T get(int index) override
     {
-
         index = length() - index - 1;
 
         if (index == 0)
@@ -65,7 +63,6 @@ public:
 
     int length() override
     {
-        
         Element<T>* current = this->first;
         
         if(current == NULL)

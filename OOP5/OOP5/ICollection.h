@@ -1,6 +1,5 @@
 #ifndef ICollection_h
 #define ICollection_h
-
 #include "Element.h"
 
 template<class T>
